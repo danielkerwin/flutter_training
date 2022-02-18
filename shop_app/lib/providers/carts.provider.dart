@@ -71,6 +71,9 @@ class Carts with ChangeNotifier {
   }
 
   void updateQuantity(String productId, int direction) {
+    if (!_items.containsKey(productId)) {
+      return;
+    }
     final quantity = (_items[productId]?.quantity ?? 0) + direction;
     if (quantity <= 0) {
       _items.remove(productId);

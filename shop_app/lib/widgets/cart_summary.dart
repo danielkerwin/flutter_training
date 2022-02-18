@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app/providers/carts.dart';
-import 'package:shop_app/providers/orders.dart';
+import 'package:shop_app/providers/carts.provider.dart';
+import 'package:shop_app/providers/orders.provider.dart';
+import 'package:shop_app/widgets/cart_summary_submit.dart';
 
 class CartSummary extends StatelessWidget {
   final double totalPrice;
@@ -42,17 +43,9 @@ class CartSummary extends StatelessWidget {
               backgroundColor: Theme.of(context).primaryColor,
             ),
             const SizedBox(width: 5),
-            TextButton(
-              onPressed: () {
-                if (totalPrice > 0) {
-                  Provider.of<Orders>(context, listen: false)
-                      .addOrder(cartProducts, totalPrice);
-                  Provider.of<Carts>(context, listen: false).clear();
-                }
-              },
-              child: const Text(
-                'Place Order',
-              ),
+            CartSummarySubmit(
+              totalPrice: totalPrice,
+              cartProducts: cartProducts,
             ),
           ],
         ),

@@ -1,8 +1,10 @@
-import 'package:shop_app/providers/product.dart';
+import 'dart:convert';
+
+import 'package:shop_app/providers/product.provider.dart';
 
 final MOCK_PRODUCTS = [
   Product(
-    id: 'p1',
+    id: '-Mw8cXroj_ztSzeqywwm',
     title: 'Red Shirt',
     description: 'A red shirt - it is pretty red!',
     price: 29.99,
@@ -10,7 +12,7 @@ final MOCK_PRODUCTS = [
         'https://cdn.pixabay.com/photo/2016/10/02/22/17/red-t-shirt-1710578_1280.jpg',
   ),
   Product(
-    id: 'p2',
+    id: '-Mw8cYaUGt2AhuFIPKCe',
     title: 'Trousers',
     description: 'A nice pair of trousers.',
     price: 59.99,
@@ -18,14 +20,14 @@ final MOCK_PRODUCTS = [
         'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Trousers%2C_dress_%28AM_1960.022-8%29.jpg/512px-Trousers%2C_dress_%28AM_1960.022-8%29.jpg',
   ),
   Product(
-    id: 'p3',
+    id: '-Mw8cZDoC5bG0f1VYvjS',
     title: 'Yellow Scarf',
     description: 'Warm and cozy - exactly what you need for the winter.',
     price: 19.99,
     imageUrl: 'https://live.staticflickr.com/4043/4438260868_cc79b3369d_z.jpg',
   ),
   Product(
-    id: 'p4',
+    id: '-Mw8cZjS_DhKt2cv19OP',
     title: 'A Pan',
     description: 'Prepare any meal you want.',
     price: 49.99,

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app/providers/carts.dart';
-import 'package:shop_app/screens/cart_screen.dart';
+import 'package:shop_app/providers/carts.provider.dart';
+import 'package:shop_app/providers/products.provider.dart';
+import 'package:shop_app/screens/cart.screen.dart';
 import 'package:shop_app/widgets/badge.dart';
 import 'package:shop_app/widgets/main_drawer.dart';
 
@@ -25,6 +26,17 @@ class ProductsOverviewScreen extends StatefulWidget {
 
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   var _filterOptions = FilterOptions.all;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _isLoading = true;
+    Provider.of<Products>(context, listen: false)
+        .fetchAndSetProducts()
+        .then((res) => setState(() => _isLoading = false))
+        .catchError((err) => setState(() => _isLoading = false));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,9 +76,11 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
           ),
         ],
       ),
-      body: ProductsGrid(
-        filterOptions: _filterOptions,
-      ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator.adaptive())
+          : ProductsGrid(
+              filterOptions: _filterOptions,
+            ),
     );
   }
 }

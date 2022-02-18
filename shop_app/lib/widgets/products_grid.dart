@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app/providers/product.dart';
-import 'package:shop_app/providers/products.dart';
-import 'package:shop_app/screens/products_overview_screen.dart';
+import 'package:shop_app/providers/product.provider.dart';
+import 'package:shop_app/providers/products.provider.dart';
+import 'package:shop_app/screens/products_overview.screen.dart';
 import 'package:shop_app/widgets/product_item.dart';
 
 class ProductsGrid extends StatefulWidget {

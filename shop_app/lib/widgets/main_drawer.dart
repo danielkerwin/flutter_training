@@ -1,9 +1,42 @@
 import 'package:flutter/material.dart';
-import 'package:shop_app/screens/orders_screen.dart';
-import 'package:shop_app/screens/products_overview_screen.dart';
+import 'package:shop_app/screens/orders.screen.dart';
+import 'package:shop_app/screens/products_overview.screen.dart';
+import 'package:shop_app/screens/user_products.screen.dart';
 
 class MainDrawer extends StatelessWidget {
+  final menuItems = const [
+    {
+      'title': 'Shop',
+      'iconData': Icons.shop,
+      'route': ProductsOverviewScreen.routeName
+    },
+    {
+      'title': 'Orders',
+      'iconData': Icons.payment,
+      'route': OrdersScreen.routeName
+    },
+    {
+      'title': 'Manage Products',
+      'iconData': Icons.edit,
+      'route': UserProductsScreen.routeName
+    },
+  ];
+
   const MainDrawer({Key? key}) : super(key: key);
+
+  List<Widget> buildListTiles(BuildContext context) {
+    return menuItems
+        .expand((item) => [
+              ListTile(
+                title: Text(item['title'] as String),
+                onTap: () => Navigator.of(context)
+                    .pushReplacementNamed(item['route'] as String),
+                leading: Icon(item['iconData'] as IconData),
+              ),
+              const Divider(),
+            ])
+        .toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,20 +47,7 @@ class MainDrawer extends StatelessWidget {
             title: const Text('Main Menu'),
             automaticallyImplyLeading: false,
           ),
-          const Divider(),
-          ListTile(
-            title: const Text('Shop'),
-            onTap: () => Navigator.of(context)
-                .pushReplacementNamed(ProductsOverviewScreen.routeName),
-            leading: const Icon(Icons.shop),
-          ),
-          const Divider(),
-          ListTile(
-            title: const Text('Orders'),
-            onTap: () => Navigator.of(context)
-                .pushReplacementNamed(OrdersScreen.routeName),
-            leading: const Icon(Icons.payment),
-          )
+          ...buildListTiles(context),
         ],
       ),
     );
