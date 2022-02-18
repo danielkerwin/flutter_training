@@ -29,6 +29,9 @@ class Products with ChangeNotifier {
     final url = Uri.parse('$databaseUrl/products.json');
     // try {
     final response = await http.get(url);
+    if (response.statusCode >= 400) {
+      return;
+    }
     final data = json.decode(response.body) as Map<String, dynamic>? ?? {};
     _items = data.entries.map((item) {
       return Product(

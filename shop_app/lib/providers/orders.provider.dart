@@ -32,9 +32,13 @@ class Orders with ChangeNotifier {
     final url = Uri.parse('$databaseUrl/orders.json');
     try {
       final response = await http.get(url);
+      if (response.statusCode >= 400) {
+        return;
+      }
       final data = json.decode(response.body) as Map<String, dynamic>? ?? {};
       _items = data.entries
           .map((item) {
+            print(item.toString());
             return Order(
               id: item.key,
               amount: item.value['amount'],
