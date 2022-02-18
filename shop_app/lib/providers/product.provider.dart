@@ -6,6 +6,7 @@ import 'package:shop_app/constants/constants.dart';
 import 'package:shop_app/models/http_exception.model.dart';
 
 class Product with ChangeNotifier {
+  String? _authToken;
   final String id;
   final String title;
   final String description;
@@ -22,12 +23,16 @@ class Product with ChangeNotifier {
     this.isFavorite = false,
   });
 
+  set authToken(String? token) {
+    _authToken = token;
+  }
+
   Future<void> toggleFavoriteStatus() async {
     final current = isFavorite;
     isFavorite = !isFavorite;
     notifyListeners();
 
-    final url = Uri.parse('$databaseUrl/products/$id.json');
+    final url = Uri.parse('${Api.database}/products/$id.json?auth=$_authToken');
     try {
       final response = await http.patch(
         url,

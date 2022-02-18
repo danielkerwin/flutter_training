@@ -22,14 +22,19 @@ class Order {
 }
 
 class Orders with ChangeNotifier {
+  String? _authToken;
   List<Order> _items = [];
+
+  set authToken(String? token) {
+    _authToken = token;
+  }
 
   List<Order> get items {
     return [..._items];
   }
 
   Future<void> fetchAndSetOrders() async {
-    final url = Uri.parse('$databaseUrl/orders.json');
+    final url = Uri.parse('${Api.database}/orders.json?auth=$_authToken');
     try {
       final response = await http.get(url);
       if (response.statusCode >= 400) {
@@ -38,7 +43,6 @@ class Orders with ChangeNotifier {
       final data = json.decode(response.body) as Map<String, dynamic>? ?? {};
       _items = data.entries
           .map((item) {
-            print(item.toString());
             return Order(
               id: item.key,
               amount: item.value['amount'],
@@ -66,7 +70,7 @@ class Orders with ChangeNotifier {
   }
 
   Future<void> addOrder(List<Cart> cartProducts, double total) async {
-    final url = Uri.parse('$databaseUrl/orders.json');
+    final url = Uri.parse('${Api.database}/orders.json?auth=$_authToken');
     final dateTime = DateTime.now();
     try {
       final body = json.encode({

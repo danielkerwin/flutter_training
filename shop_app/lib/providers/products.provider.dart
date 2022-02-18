@@ -7,7 +7,12 @@ import 'package:shop_app/models/http_exception.model.dart';
 import 'package:shop_app/providers/product.provider.dart';
 
 class Products with ChangeNotifier {
+  String? _authToken;
   List<Product> _items = [];
+
+  set authToken(String? token) {
+    _authToken = token;
+  }
 
   List<Product> get items {
     return [..._items];
@@ -26,7 +31,7 @@ class Products with ChangeNotifier {
   }
 
   Future<void> fetchAndSetProducts() async {
-    final url = Uri.parse('$databaseUrl/products.json');
+    final url = Uri.parse('${Api.database}/products.json?auth=$_authToken');
     // try {
     final response = await http.get(url);
     if (response.statusCode >= 400) {
@@ -51,7 +56,7 @@ class Products with ChangeNotifier {
   }
 
   Future<void> addOne(Product item) async {
-    final url = Uri.parse('$databaseUrl/products.json');
+    final url = Uri.parse('${Api.database}/products.json?auth=$_authToken');
     try {
       final response = await http.post(
         url,
@@ -81,7 +86,8 @@ class Products with ChangeNotifier {
   }
 
   Future<void> updateOne(Product item) async {
-    final url = Uri.parse('$databaseUrl/products/${item.id}.json');
+    final url =
+        Uri.parse('${Api.database}/products/${item.id}.json?auth=$_authToken');
     final index = _items.indexWhere((el) => el.id == item.id);
     try {
       await http.patch(
@@ -108,7 +114,7 @@ class Products with ChangeNotifier {
     _items.removeAt(index);
     notifyListeners();
 
-    final url = Uri.parse('$databaseUrl/products/$id');
+    final url = Uri.parse('${Api.database}/products/$id.json?auth=$_authToken');
     try {
       final response = await http.delete(url);
       if (response.statusCode >= 400) {

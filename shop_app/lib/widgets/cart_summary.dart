@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:shop_app/providers/carts.provider.dart';
-import 'package:shop_app/providers/orders.provider.dart';
 import 'package:shop_app/widgets/cart_summary_submit.dart';
 
 class CartSummary extends StatelessWidget {
