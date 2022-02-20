@@ -51,7 +51,9 @@ class MainDrawer extends StatelessWidget {
           ...buildListTiles(context),
           ListTile(
             title: const Text('Logout'),
-            onTap: () => Provider.of<Auth>(context, listen: false).logout(),
+            onTap: () {
+              Provider.of<Auth>(context, listen: false).logout();
+            },
             leading: const Icon(Icons.exit_to_app),
           ),
         ],

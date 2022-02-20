@@ -6,6 +6,11 @@ import '../constants/constants.dart';
 import '../models/auth.model.dart';
 import '../providers/auth.provider.dart';
 
+class Heights {
+  static double signin = 260.0;
+  static double signup = 320.0;
+}
+
 class AuthScreen extends StatelessWidget {
   const AuthScreen({Key? key}) : super(key: key);
 
@@ -83,20 +88,44 @@ class AuthScreen extends StatelessWidget {
 }
 
 class AuthCard extends StatefulWidget {
-  const AuthCard({
-    Key? key,
-  }) : super(key: key);
+  const AuthCard({Key? key}) : super(key: key);
 
   @override
   _AuthCardState createState() => _AuthCardState();
 }
 
-class _AuthCardState extends State<AuthCard> {
+class _AuthCardState extends State<AuthCard>
+    with SingleTickerProviderStateMixin {
   final GlobalKey<FormState> _formKey = GlobalKey();
   AuthMode _authMode = AuthMode.login;
   final AuthData _authData = AuthData(email: '', password: '');
   var _isLoading = false;
   final _passwordController = TextEditingController();
+  late AnimationController _animationController;
+  late Animation<Size> _heightAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 200),
+    );
+    _heightAnimation = Tween<Size>(
+      begin: Size(double.infinity, Heights.signin),
+      end: Size(double.infinity, Heights.signup),
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.linear,
+    ));
+    _heightAnimation.addListener(() => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _animationController.dispose();
+  }
 
   void _submit() async {
     if (!_formKey.currentState!.validate()) {
@@ -122,10 +151,12 @@ class _AuthCardState extends State<AuthCard> {
       setState(() {
         _authMode = AuthMode.signup;
       });
+      _animationController.forward();
     } else {
       setState(() {
         _authMode = AuthMode.login;
       });
+      _animationController.reverse();
     }
   }
 
@@ -138,9 +169,10 @@ class _AuthCardState extends State<AuthCard> {
       ),
       elevation: 8.0,
       child: Container(
-        height: _authMode == AuthMode.signup ? 320 : 260,
-        constraints:
-            BoxConstraints(minHeight: _authMode == AuthMode.signup ? 320 : 260),
+        height: _heightAnimation.value.height,
+        constraints: BoxConstraints(
+          minHeight: _heightAnimation.value.height,
+        ),
         width: deviceSize.width * 0.75,
         padding: const EdgeInsets.all(16.0),
         child: Form(

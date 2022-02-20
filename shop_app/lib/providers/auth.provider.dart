@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants/constants.dart';
@@ -31,7 +32,7 @@ class Auth with ChangeNotifier {
     return token != null ? _userId : null;
   }
 
-  void logout() {
+  void logout() async {
     _token = null;
     _expiryDate = null;
     _userId = null;
@@ -42,13 +43,13 @@ class Auth with ChangeNotifier {
     }
 
     notifyListeners();
+
+    final prefs = await SharedPreferences.getInstance();
+    prefs.remove(userDataKey);
   }
 
   Future<bool> tryAutoLogin() async {
-    print('trying auto login');
     final prefs = await SharedPreferences.getInstance();
-    print('got prefs');
-    print(prefs.toString());
     if (!prefs.containsKey(userDataKey)) {
       return false;
     }
@@ -86,8 +87,8 @@ class Auth with ChangeNotifier {
     AuthMode method,
   ) async {
     try {
+      final apiKey = dotenv.get('API_KEY');
       final url = Uri.parse('${_getAuthUrl(method)}?key=$apiKey');
-      print(url);
       final response = await http.post(
         url,
         body: json.encode({
@@ -109,7 +110,7 @@ class Auth with ChangeNotifier {
       final userData = json.encode({
         'token': _token,
         'userId': _userId,
-        'expiresIn': _expiryDate,
+        'expiresIn': expiryDate.toIso8601String(),
       });
       prefs.setString(userDataKey, userData);
     } catch (err) {

@@ -11,14 +11,12 @@ class UserProductsScreen extends StatelessWidget {
   const UserProductsScreen({Key? key}) : super(key: key);
 
   Future<void> _refreshProducts(BuildContext context) {
-    print('about to fetch products');
     return Provider.of<Products>(context, listen: false)
         .fetchAndSetProducts(true);
   }
 
   @override
   Widget build(BuildContext context) {
-    print('rebuilding user products');
     return Scaffold(
       drawer: const MainDrawer(),
       appBar: AppBar(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 
 import 'providers/auth.provider.dart';
@@ -14,12 +15,13 @@ import 'screens/products_overview.screen.dart';
 import 'screens/splash_screen.dart';
 import 'screens/user_products.screen.dart';
 
-void main() => runApp(const MyApp());
+void main() async {
+  await dotenv.load();
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
-  const MyApp({
-    Key? key,
-  }) : super(key: key);
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +52,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<Carts>(create: (_) => Carts()),
       ],
       child: Consumer<Auth>(builder: (_, auth, __) {
+        ifAuth(targetScreen) => auth.isAuth ? targetScreen : AuthScreen();
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'MyShop',
@@ -70,11 +73,14 @@ class MyApp extends StatelessWidget {
                   },
                 ),
           routes: {
-            ProductDetailScreen.routeName: (ctx) => const ProductDetailScreen(),
-            CartScreen.routeName: (ctx) => const CartScreen(),
-            OrdersScreen.routeName: (ctx) => const OrdersScreen(),
-            UserProductsScreen.routeName: (ctx) => const UserProductsScreen(),
-            EditProductScreen.routeName: (ctx) => const EditProductScreen(),
+            ProductDetailScreen.routeName: (ctx) =>
+                ifAuth(const ProductDetailScreen()),
+            CartScreen.routeName: (ctx) => ifAuth(const CartScreen()),
+            OrdersScreen.routeName: (ctx) => ifAuth(const OrdersScreen()),
+            UserProductsScreen.routeName: (ctx) =>
+                ifAuth(const UserProductsScreen()),
+            EditProductScreen.routeName: (ctx) =>
+                ifAuth(const EditProductScreen()),
           },
         );
       }),

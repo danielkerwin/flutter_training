@@ -7,8 +7,6 @@ abstract class Api {
       'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword';
 }
 
-const apiKey = 'AIzaSyA9XkIGLlGOc5OfAhCclKIYUgZXPT_GO_o';
-
 enum AuthMode { signup, login }
 
 const userDataKey = 'shopApp_userData';
