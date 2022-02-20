@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app/providers/products.provider.dart';
-import 'package:shop_app/screens/edit_product.screen.dart';
-import 'package:shop_app/widgets/user_product_item_delete.dart';
+
+import '../providers/products.provider.dart';
+import '../screens/edit_product.screen.dart';
+import 'user_product_item_delete.dart';
 
 class UserProductItem extends StatelessWidget {
   final String productId;

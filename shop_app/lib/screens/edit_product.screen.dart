@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app/providers/product.provider.dart';
-import 'package:shop_app/providers/products.provider.dart';
+import '../providers/product.provider.dart';
+import '../providers/products.provider.dart';
 
 class EditProductScreen extends StatefulWidget {
   static const routeName = '/edit-product';
@@ -77,6 +77,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
       if (_product.id.isNotEmpty) {
         await provider.updateOne(_product);
       } else {
+        print('about to execute addOne provider');
         await provider.addOne(_product);
       }
       Navigator.of(context).pop();

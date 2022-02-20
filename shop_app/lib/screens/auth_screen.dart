@@ -2,15 +2,11 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app/models/auth.model.dart';
-import 'package:shop_app/providers/auth.provider.dart';
-import 'package:shop_app/screens/products_overview.screen.dart';
-
-enum AuthMode { signup, login }
+import '../constants/constants.dart';
+import '../models/auth.model.dart';
+import '../providers/auth.provider.dart';
 
 class AuthScreen extends StatelessWidget {
-  static const routeName = '/auth';
-
   const AuthScreen({Key? key}) : super(key: key);
 
   @override
@@ -111,19 +107,11 @@ class _AuthCardState extends State<AuthCard> {
     setState(() {
       _isLoading = true;
     });
-    if (_authMode == AuthMode.login) {
-      await Provider.of<Auth>(context, listen: false).signIn(
-        _authData.email,
-        _authData.password,
-      );
-    } else {
-      await Provider.of<Auth>(context, listen: false).signUp(
-        _authData.email,
-        _authData.password,
-      );
-    }
-    Navigator.of(context)
-        .pushReplacementNamed(ProductsOverviewScreen.routeName);
+    await Provider.of<Auth>(context, listen: false).authenticate(
+      _authData.email,
+      _authData.password,
+      _authMode,
+    );
     setState(() {
       _isLoading = false;
     });

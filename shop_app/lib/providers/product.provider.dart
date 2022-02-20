@@ -2,11 +2,11 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:shop_app/constants/constants.dart';
-import 'package:shop_app/models/http_exception.model.dart';
+
+import '../constants/constants.dart';
+import '../models/http_exception.model.dart';
 
 class Product with ChangeNotifier {
-  String? _authToken;
   final String id;
   final String title;
   final String description;
@@ -23,26 +23,21 @@ class Product with ChangeNotifier {
     this.isFavorite = false,
   });
 
-  set authToken(String? token) {
-    _authToken = token;
-  }
-
-  Future<void> toggleFavoriteStatus() async {
+  Future<void> toggleFavoriteStatus(String? authToken, String? userId) async {
     final current = isFavorite;
     isFavorite = !isFavorite;
     notifyListeners();
 
-    final url = Uri.parse('${Api.database}/products/$id.json?auth=$_authToken');
+    final url = Uri.https(
+      Api.database,
+      '/userFavorites/$userId/$id.json',
+      {'auth': authToken},
+    );
+
     try {
-      final response = await http.patch(
+      final response = await http.put(
         url,
-        body: json.encode({
-          'title': title,
-          'description': description,
-          'price': price,
-          'imageUrl': imageUrl,
-          'isFavorite': isFavorite,
-        }),
+        body: json.encode(isFavorite),
       );
       if (response.statusCode >= 400) {
         throw HttpException('Failed to update favorite');

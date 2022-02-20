@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shop_app/providers/carts.provider.dart';
-import 'package:shop_app/widgets/cart_summary_submit.dart';
+import '../providers/carts.provider.dart';
+import 'cart_summary_submit.dart';
 
 class CartSummary extends StatelessWidget {
   final double totalPrice;

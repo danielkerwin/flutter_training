@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app/providers/carts.provider.dart';
-import 'package:shop_app/providers/products.provider.dart';
-import 'package:shop_app/screens/cart.screen.dart';
-import 'package:shop_app/widgets/badge.dart';
-import 'package:shop_app/widgets/main_drawer.dart';
-
-import 'package:shop_app/widgets/products_grid.dart';
+import '../providers/carts.provider.dart';
+import '../providers/products.provider.dart';
+import 'cart.screen.dart';
+import '../widgets/badge.dart';
+import '../widgets/main_drawer.dart';
+import '../widgets/products_grid.dart';
 
 enum FilterOptions {
   favorites,
@@ -14,8 +13,6 @@ enum FilterOptions {
 }
 
 class ProductsOverviewScreen extends StatefulWidget {
-  static const routeName = '/products-overview';
-
   const ProductsOverviewScreen({
     Key? key,
   }) : super(key: key);
@@ -26,16 +23,9 @@ class ProductsOverviewScreen extends StatefulWidget {
 
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   var _filterOptions = FilterOptions.all;
-  bool _isLoading = false;
 
-  @override
-  void initState() {
-    super.initState();
-    _isLoading = true;
-    Provider.of<Products>(context, listen: false)
-        .fetchAndSetProducts()
-        .then((res) => setState(() => _isLoading = false))
-        .catchError((err) => setState(() => _isLoading = false));
+  Future _future() {
+    return Provider.of<Products>(context, listen: false).fetchAndSetProducts();
   }
 
   @override
@@ -76,11 +66,21 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
           ),
         ],
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator.adaptive())
-          : ProductsGrid(
-              filterOptions: _filterOptions,
-            ),
+      body: FutureBuilder(
+        future: _future(),
+        builder: (_, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator.adaptive());
+          }
+          if (snapshot.hasError) {
+            return const Center(
+                child: Text('Something has gone wrong - please try again'));
+          }
+          return ProductsGrid(
+            filterOptions: _filterOptions,
+          );
+        },
+      ),
     );
   }
 }

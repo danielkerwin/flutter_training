@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import 'package:shop_app/constants/constants.dart';
-import 'package:shop_app/models/http_exception.model.dart';
-import 'package:shop_app/providers/carts.provider.dart';
+import '../constants/constants.dart';
+import '../models/http_exception.model.dart';
+import 'carts.provider.dart';
 
 class Order {
   final String id;
@@ -23,10 +23,15 @@ class Order {
 
 class Orders with ChangeNotifier {
   String? _authToken;
+  String? _userId;
   List<Order> _items = [];
 
   set authToken(String? token) {
     _authToken = token;
+  }
+
+  set userId(String? userId) {
+    _userId = userId;
   }
 
   List<Order> get items {
@@ -34,7 +39,11 @@ class Orders with ChangeNotifier {
   }
 
   Future<void> fetchAndSetOrders() async {
-    final url = Uri.parse('${Api.database}/orders.json?auth=$_authToken');
+    final url = Uri.https(
+      Api.database,
+      '/orders/$_userId.json',
+      {'auth': _authToken},
+    );
     try {
       final response = await http.get(url);
       if (response.statusCode >= 400) {
@@ -70,7 +79,11 @@ class Orders with ChangeNotifier {
   }
 
   Future<void> addOrder(List<Cart> cartProducts, double total) async {
-    final url = Uri.parse('${Api.database}/orders.json?auth=$_authToken');
+    final url = Uri.https(
+      Api.database,
+      '/orders/$_userId.json',
+      {'auth': _authToken},
+    );
     final dateTime = DateTime.now();
     try {
       final body = json.encode({

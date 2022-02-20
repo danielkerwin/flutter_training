@@ -1,26 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app/providers/auth.provider.dart';
-import 'package:shop_app/screens/orders.screen.dart';
-import 'package:shop_app/screens/products_overview.screen.dart';
-import 'package:shop_app/screens/user_products.screen.dart';
+import '../providers/auth.provider.dart';
+import '../screens/orders.screen.dart';
+import '../screens/user_products.screen.dart';
 
 class MainDrawer extends StatelessWidget {
   final menuItems = const [
     {
       'title': 'Shop',
       'iconData': Icons.shop,
-      'route': ProductsOverviewScreen.routeName
+      'route': '/',
     },
     {
       'title': 'Orders',
       'iconData': Icons.payment,
-      'route': OrdersScreen.routeName
+      'route': OrdersScreen.routeName,
     },
     {
       'title': 'Manage Products',
       'iconData': Icons.edit,
-      'route': UserProductsScreen.routeName
+      'route': UserProductsScreen.routeName,
     },
   ];
 
@@ -50,11 +49,11 @@ class MainDrawer extends StatelessWidget {
             automaticallyImplyLeading: false,
           ),
           ...buildListTiles(context),
-          // ListTile(
-          //   title: const Text('Logout'),
-          //   onTap: () => Provider.of<Auth>(context, listen: false).logout(),
-          //   leading: const Icon(Icons.logout),
-          // ),
+          ListTile(
+            title: const Text('Logout'),
+            onTap: () => Provider.of<Auth>(context, listen: false).logout(),
+            leading: const Icon(Icons.exit_to_app),
+          ),
         ],
       ),
     );

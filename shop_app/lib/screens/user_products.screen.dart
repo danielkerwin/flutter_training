@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app/providers/products.provider.dart';
-import 'package:shop_app/screens/edit_product.screen.dart';
-import 'package:shop_app/widgets/main_drawer.dart';
-import 'package:shop_app/widgets/user_product_item.dart';
+import '../providers/products.provider.dart';
+import 'edit_product.screen.dart';
+import '../widgets/main_drawer.dart';
+import '../widgets/user_product_item.dart';
 
 class UserProductsScreen extends StatelessWidget {
   static const routeName = '/user-products';
@@ -11,12 +11,14 @@ class UserProductsScreen extends StatelessWidget {
   const UserProductsScreen({Key? key}) : super(key: key);
 
   Future<void> _refreshProducts(BuildContext context) {
-    return Provider.of<Products>(context, listen: false).fetchAndSetProducts();
+    print('about to fetch products');
+    return Provider.of<Products>(context, listen: false)
+        .fetchAndSetProducts(true);
   }
 
   @override
   Widget build(BuildContext context) {
-    final products = Provider.of<Products>(context);
+    print('rebuilding user products');
     return Scaffold(
       drawer: const MainDrawer(),
       appBar: AppBar(
@@ -29,24 +31,41 @@ class UserProductsScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: RefreshIndicator(
-        onRefresh: () => _refreshProducts(context),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: ListView.builder(
-            itemBuilder: (_, idx) => Column(
-              children: [
-                UserProductItem(
-                  productId: products.items[idx].id,
-                  title: products.items[idx].title,
-                  imageUrl: products.items[idx].imageUrl,
+      body: FutureBuilder(
+        future: _refreshProducts(context),
+        builder: (ctx, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator.adaptive(),
+            );
+          }
+          if (snapshot.hasError) {
+            return const Center(
+              child: Text('Something has gone wrong - try again later'),
+            );
+          }
+          return RefreshIndicator(
+            onRefresh: () => _refreshProducts(context),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Consumer<Products>(
+                builder: (_, products, __) => ListView.builder(
+                  itemBuilder: (___, idx) => Column(
+                    children: [
+                      UserProductItem(
+                        productId: products.items[idx].id,
+                        title: products.items[idx].title,
+                        imageUrl: products.items[idx].imageUrl,
+                      ),
+                      const Divider(),
+                    ],
+                  ),
+                  itemCount: products.items.length,
                 ),
-                const Divider(),
-              ],
+              ),
             ),
-            itemCount: products.items.length,
-          ),
-        ),
+          );
+        },
       ),
     );
   }

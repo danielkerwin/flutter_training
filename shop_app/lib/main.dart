@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app/providers/auth.provider.dart';
-import 'package:shop_app/providers/carts.provider.dart';
-import 'package:shop_app/providers/orders.provider.dart';
-import 'package:shop_app/providers/products.provider.dart';
-import 'package:shop_app/screens/auth_screen.dart';
-import 'package:shop_app/screens/cart.screen.dart';
-import 'package:shop_app/screens/edit_product.screen.dart';
-import 'package:shop_app/screens/orders.screen.dart';
-import 'package:shop_app/screens/product_detail.screen.dart';
-import 'package:shop_app/screens/products_overview.screen.dart';
-import 'package:shop_app/screens/user_products.screen.dart';
+
+import 'providers/auth.provider.dart';
+import 'providers/carts.provider.dart';
+import 'providers/orders.provider.dart';
+import 'providers/products.provider.dart';
+import 'screens/auth_screen.dart';
+import 'screens/cart.screen.dart';
+import 'screens/edit_product.screen.dart';
+import 'screens/orders.screen.dart';
+import 'screens/product_detail.screen.dart';
+import 'screens/products_overview.screen.dart';
+import 'screens/splash_screen.dart';
+import 'screens/user_products.screen.dart';
 
 void main() => runApp(const MyApp());
 
@@ -33,6 +35,7 @@ class MyApp extends StatelessWidget {
           create: (_) => Products(),
           update: (_, auth, products) {
             products?.authToken = auth.token;
+            products?.userId = auth.userId;
             return products as Products;
           },
         ),
@@ -40,36 +43,41 @@ class MyApp extends StatelessWidget {
           create: (_) => Orders(),
           update: (_, auth, orders) {
             orders?.authToken = auth.token;
+            orders?.userId = auth.userId;
             return orders as Orders;
           },
         ),
         ChangeNotifierProvider<Carts>(create: (_) => Carts()),
       ],
-      child: Consumer<Auth>(
-          builder: (_, auth, __) => MaterialApp(
-                title: 'MyShop',
-                theme: theme.copyWith(
-                  colorScheme: theme.colorScheme.copyWith(
-                    secondary: Colors.redAccent,
-                  ),
+      child: Consumer<Auth>(builder: (_, auth, __) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'MyShop',
+          theme: theme.copyWith(
+            colorScheme: theme.colorScheme.copyWith(
+              secondary: Colors.redAccent,
+            ),
+          ),
+          home: auth.isAuth
+              ? const ProductsOverviewScreen()
+              : FutureBuilder(
+                  future: auth.tryAutoLogin(),
+                  builder: (_, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const SplashScreen();
+                    }
+                    return const AuthScreen();
+                  },
                 ),
-                home: auth.isAuth
-                    ? const ProductsOverviewScreen()
-                    : const AuthScreen(),
-                routes: {
-                  ProductsOverviewScreen.routeName: (ctx) =>
-                      const ProductsOverviewScreen(),
-                  ProductDetailScreen.routeName: (ctx) =>
-                      const ProductDetailScreen(),
-                  CartScreen.routeName: (ctx) => const CartScreen(),
-                  OrdersScreen.routeName: (ctx) => const OrdersScreen(),
-                  UserProductsScreen.routeName: (ctx) =>
-                      const UserProductsScreen(),
-                  EditProductScreen.routeName: (ctx) =>
-                      const EditProductScreen(),
-                  AuthScreen.routeName: (ctx) => const AuthScreen(),
-                },
-              )),
+          routes: {
+            ProductDetailScreen.routeName: (ctx) => const ProductDetailScreen(),
+            CartScreen.routeName: (ctx) => const CartScreen(),
+            OrdersScreen.routeName: (ctx) => const OrdersScreen(),
+            UserProductsScreen.routeName: (ctx) => const UserProductsScreen(),
+            EditProductScreen.routeName: (ctx) => const EditProductScreen(),
+          },
+        );
+      }),
     );
   }
 }

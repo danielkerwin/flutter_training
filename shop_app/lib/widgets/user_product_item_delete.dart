@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shop_app/providers/products.provider.dart';
+
+import '../providers/products.provider.dart';
 
 class UserProductItemDelete extends StatelessWidget {
   final Products products;

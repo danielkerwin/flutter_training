@@ -2,16 +2,22 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:shop_app/constants/constants.dart';
-import 'package:shop_app/models/http_exception.model.dart';
-import 'package:shop_app/providers/product.provider.dart';
+
+import '../constants/constants.dart';
+import '../models/http_exception.model.dart';
+import 'product.provider.dart';
 
 class Products with ChangeNotifier {
   String? _authToken;
+  String? _userId;
   List<Product> _items = [];
 
   set authToken(String? token) {
     _authToken = token;
+  }
+
+  set userId(String? userId) {
+    _userId = userId;
   }
 
   List<Product> get items {
@@ -30,42 +36,78 @@ class Products with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchAndSetProducts() async {
-    final url = Uri.parse('${Api.database}/products.json?auth=$_authToken');
-    // try {
-    final response = await http.get(url);
-    if (response.statusCode >= 400) {
-      return;
-    }
-    final data = json.decode(response.body) as Map<String, dynamic>? ?? {};
-    _items = data.entries.map((item) {
-      return Product(
-        id: item.key,
-        title: item.value['title'],
-        description: item.value['description'],
-        imageUrl: item.value['imageUrl'],
-        price: item.value['price'],
-        isFavorite: item.value['isFavorite'],
+  Future<void> fetchAndSetProducts([bool filterByUser = false]) async {
+    final filterMap = filterByUser
+        ? {
+            'orderBy': '"userId"',
+            'equalTo': '"$_userId"',
+          }
+        : {};
+    try {
+      final productsUrl = Uri.https(
+        Api.database,
+        '/products.json',
+        {
+          ...filterMap,
+          'auth': _authToken,
+        },
       );
-    }).toList();
-    notifyListeners();
-    // } catch (err) {
-    //   print(err.toString());
-    //   throw Exception(err.toString());
-    // }
+      final productsResponse = await http.get(productsUrl);
+      if (productsResponse.statusCode >= 400) {
+        return;
+      }
+
+      final productsData =
+          json.decode(productsResponse.body) as Map<String, dynamic>? ?? {};
+      if (productsData.isEmpty) {
+        return;
+      }
+
+      final favoritesUrl = Uri.https(
+        Api.database,
+        '/userFavorites/$_userId.json',
+        {'auth': _authToken},
+      );
+      final favoritesResponse = await http.get(favoritesUrl);
+      if (favoritesResponse.statusCode >= 400) {
+        return;
+      }
+
+      final favoritesData =
+          json.decode(favoritesResponse.body) as Map<String, dynamic>? ?? {};
+
+      _items = productsData.entries.map((item) {
+        return Product(
+          id: item.key,
+          title: item.value['title'],
+          description: item.value['description'],
+          imageUrl: item.value['imageUrl'],
+          price: item.value['price'],
+          isFavorite: favoritesData[item.key] ?? false,
+        );
+      }).toList();
+      notifyListeners();
+    } catch (err) {
+      print(err.toString());
+      throw Exception(err.toString());
+    }
   }
 
   Future<void> addOne(Product item) async {
-    final url = Uri.parse('${Api.database}/products.json?auth=$_authToken');
+    final url = Uri.https(
+      Api.database,
+      '/products.json',
+      {'auth': _authToken},
+    );
     try {
       final response = await http.post(
         url,
         body: json.encode({
           'title': item.title,
           'description': item.description,
-          'isFavorite': item.isFavorite,
           'price': item.price,
           'imageUrl': item.imageUrl,
+          'userId': _userId,
         }),
       );
       final responseData = json.decode(response.body);
@@ -73,11 +115,9 @@ class Products with ChangeNotifier {
         id: responseData['name'],
         description: item.description,
         title: item.title,
-        isFavorite: item.isFavorite,
         price: item.price,
         imageUrl: item.imageUrl,
       ));
-      _items.add(item);
       notifyListeners();
     } catch (err) {
       print(err.toString());
@@ -86,8 +126,11 @@ class Products with ChangeNotifier {
   }
 
   Future<void> updateOne(Product item) async {
-    final url =
-        Uri.parse('${Api.database}/products/${item.id}.json?auth=$_authToken');
+    final url = Uri.https(
+      Api.database,
+      '/products/${item.id}.json',
+      {'auth': _authToken},
+    );
     final index = _items.indexWhere((el) => el.id == item.id);
     try {
       await http.patch(
@@ -114,7 +157,11 @@ class Products with ChangeNotifier {
     _items.removeAt(index);
     notifyListeners();
 
-    final url = Uri.parse('${Api.database}/products/$id.json?auth=$_authToken');
+    final url = Uri.https(
+      Api.database,
+      '/products/$id.json',
+      {'auth': _authToken},
+    );
     try {
       final response = await http.delete(url);
       if (response.statusCode >= 400) {
