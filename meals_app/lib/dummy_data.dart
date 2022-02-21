@@ -3,7 +3,7 @@ import 'package:meals_app/models/meal.dart';
 
 import 'models/category.dart';
 
-const DUMMY_CATEGORIES = [
+const dummyCategories = [
   Category(
     id: 'c1',
     title: 'Italian',
@@ -56,7 +56,7 @@ const DUMMY_CATEGORIES = [
   ),
 ];
 
-const DUMMY_MEALS = [
+const dummyMeals = [
   Meal(
     id: 'm1',
     categoryIds: [

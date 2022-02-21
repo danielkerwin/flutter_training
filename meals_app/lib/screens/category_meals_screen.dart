@@ -32,11 +32,11 @@ class _CategoryMealsScreenState extends State<CategoryMealsScreen> {
         .toList();
   }
 
-  void _removeItem(String id) {
-    setState(() {
-      displayedMeals.removeWhere((meal) => meal.id == id);
-    });
-  }
+  // void _removeItem(String id) {
+  //   setState(() {
+  //     displayedMeals.removeWhere((meal) => meal.id == id);
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {

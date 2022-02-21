@@ -20,13 +20,13 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   Filters _filters = const Filters();
-  List<Meal> _availableMeals = DUMMY_MEALS;
-  List<Meal> _favoriteMeals = [];
+  List<Meal> _availableMeals = dummyMeals;
+  final List<Meal> _favoriteMeals = [];
 
   void _setFilters(Filters filters) {
     setState(() {
       _filters = filters;
-      _availableMeals = DUMMY_MEALS.where((meal) {
+      _availableMeals = dummyMeals.where((meal) {
         if (_filters.gluten && !meal.isGlutenFree) {
           return false;
         }
@@ -52,7 +52,7 @@ class _MyAppState extends State<MyApp> {
       });
     } else {
       setState(() {
-        _favoriteMeals.add(DUMMY_MEALS.firstWhere((meal) => meal.id == id));
+        _favoriteMeals.add(dummyMeals.firstWhere((meal) => meal.id == id));
       });
     }
   }

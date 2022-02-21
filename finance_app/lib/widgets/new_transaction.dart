@@ -9,7 +9,8 @@ import '/models/transaction.dart';
 class NewTransaction extends StatefulWidget {
   final AddNewTransactionCallback addNewTransaction;
 
-  NewTransaction({required this.addNewTransaction}) {
+  NewTransaction({Key? key, required this.addNewTransaction})
+      : super(key: key) {
     print('constructor() NewTransaction');
   }
 
