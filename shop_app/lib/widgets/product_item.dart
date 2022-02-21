@@ -27,9 +27,16 @@ class ProductItem extends StatelessWidget {
             ProductDetailScreen.routeName,
             arguments: product.id,
           ),
-          child: Image.network(
-            product.imageUrl,
-            fit: BoxFit.cover,
+          child: Hero(
+            tag: product.id,
+            child: FadeInImage(
+              placeholder:
+                  const AssetImage('assets/images/product-placeholder.png'),
+              image: NetworkImage(
+                product.imageUrl,
+              ),
+              fit: BoxFit.cover,
+            ),
           ),
         ),
         footer: GridTileBar(
@@ -53,7 +60,8 @@ class ProductItem extends StatelessWidget {
                   scaffold.showSnackBar(
                     const SnackBar(
                       content: Text(
-                          'Failed to update favorite status - try again later'),
+                        'Failed to update favorite status - try again later',
+                      ),
                     ),
                   );
                 }

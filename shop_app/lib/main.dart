@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 
+import 'helpers/custom_route.dart';
 import 'providers/auth.provider.dart';
 import 'providers/carts.provider.dart';
 import 'providers/orders.provider.dart';
@@ -29,6 +30,12 @@ class MyApp extends StatelessWidget {
       brightness: Brightness.light,
       primarySwatch: Colors.purple,
       fontFamily: 'Lato',
+      pageTransitionsTheme: PageTransitionsTheme(
+        builders: {
+          TargetPlatform.iOS: CustomPageTransitionsBuilder(),
+          TargetPlatform.android: CustomPageTransitionsBuilder(),
+        },
+      ),
     );
     return MultiProvider(
       providers: [
@@ -51,39 +58,42 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider<Carts>(create: (_) => Carts()),
       ],
-      child: Consumer<Auth>(builder: (_, auth, __) {
-        ifAuth(targetScreen) => auth.isAuth ? targetScreen : AuthScreen();
-        return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'MyShop',
-          theme: theme.copyWith(
-            colorScheme: theme.colorScheme.copyWith(
-              secondary: Colors.redAccent,
+      child: Consumer<Auth>(
+        builder: (_, auth, __) {
+          ifAuth(targetScreen) =>
+              auth.isAuth ? targetScreen : const AuthScreen();
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'MyShop',
+            theme: theme.copyWith(
+              colorScheme: theme.colorScheme.copyWith(
+                secondary: Colors.redAccent,
+              ),
             ),
-          ),
-          home: auth.isAuth
-              ? const ProductsOverviewScreen()
-              : FutureBuilder(
-                  future: auth.tryAutoLogin(),
-                  builder: (_, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const SplashScreen();
-                    }
-                    return const AuthScreen();
-                  },
-                ),
-          routes: {
-            ProductDetailScreen.routeName: (ctx) =>
-                ifAuth(const ProductDetailScreen()),
-            CartScreen.routeName: (ctx) => ifAuth(const CartScreen()),
-            OrdersScreen.routeName: (ctx) => ifAuth(const OrdersScreen()),
-            UserProductsScreen.routeName: (ctx) =>
-                ifAuth(const UserProductsScreen()),
-            EditProductScreen.routeName: (ctx) =>
-                ifAuth(const EditProductScreen()),
-          },
-        );
-      }),
+            home: auth.isAuth
+                ? const ProductsOverviewScreen()
+                : FutureBuilder(
+                    future: auth.tryAutoLogin(),
+                    builder: (_, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const SplashScreen();
+                      }
+                      return const AuthScreen();
+                    },
+                  ),
+            routes: {
+              ProductDetailScreen.routeName: (ctx) =>
+                  ifAuth(const ProductDetailScreen()),
+              CartScreen.routeName: (ctx) => ifAuth(const CartScreen()),
+              OrdersScreen.routeName: (ctx) => ifAuth(const OrdersScreen()),
+              UserProductsScreen.routeName: (ctx) =>
+                  ifAuth(const UserProductsScreen()),
+              EditProductScreen.routeName: (ctx) =>
+                  ifAuth(const EditProductScreen()),
+            },
+          );
+        },
+      ),
     );
   }
 }

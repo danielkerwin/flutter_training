@@ -89,12 +89,14 @@ class Orders with ChangeNotifier {
       final body = json.encode({
         'amount': total,
         'products': cartProducts
-            .map((item) => {
-                  'id': item.id,
-                  'title': item.title,
-                  'quantity': item.quantity,
-                  'price': item.price,
-                })
+            .map(
+              (item) => {
+                'id': item.id,
+                'title': item.title,
+                'quantity': item.quantity,
+                'price': item.price,
+              },
+            )
             .toList(),
         'dateTime': dateTime.toIso8601String(),
       });

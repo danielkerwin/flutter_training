@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../helpers/custom_route.dart';
 import '../providers/auth.provider.dart';
 import '../screens/orders.screen.dart';
+import '../screens/products_overview.screen.dart';
 import '../screens/user_products.screen.dart';
 
 class MainDrawer extends StatelessWidget {
@@ -9,17 +11,17 @@ class MainDrawer extends StatelessWidget {
     {
       'title': 'Shop',
       'iconData': Icons.shop,
-      'route': '/',
+      'route': ProductsOverviewScreen(),
     },
     {
       'title': 'Orders',
       'iconData': Icons.payment,
-      'route': OrdersScreen.routeName,
+      'route': OrdersScreen(),
     },
     {
       'title': 'Manage Products',
       'iconData': Icons.edit,
-      'route': UserProductsScreen.routeName,
+      'route': UserProductsScreen(),
     },
   ];
 
@@ -27,15 +29,20 @@ class MainDrawer extends StatelessWidget {
 
   List<Widget> buildListTiles(BuildContext context) {
     return menuItems
-        .expand((item) => [
-              ListTile(
-                title: Text(item['title'] as String),
-                onTap: () => Navigator.of(context)
-                    .pushReplacementNamed(item['route'] as String),
-                leading: Icon(item['iconData'] as IconData),
+        .expand(
+          (item) => [
+            ListTile(
+              title: Text(item['title'] as String),
+              onTap: () => Navigator.of(context).pushReplacement(
+                CustomRoute(
+                  builder: (ctx) => item['route'] as Widget,
+                ),
               ),
-              const Divider(),
-            ])
+              leading: Icon(item['iconData'] as IconData),
+            ),
+            const Divider(),
+          ],
+        )
         .toList();
   }
 

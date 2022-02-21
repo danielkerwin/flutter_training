@@ -74,7 +74,8 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
           }
           if (snapshot.hasError) {
             return const Center(
-                child: Text('Something has gone wrong - please try again'));
+              child: Text('Something has gone wrong - please try again'),
+            );
           }
           return ProductsGrid(
             filterOptions: _filterOptions,

@@ -8,6 +8,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/constants.dart';
 import 'package:http/http.dart' as http;
 
+import '../models/http_exception.model.dart';
+
 class Auth with ChangeNotifier {
   String? _token;
   DateTime? _expiryDate;
@@ -97,6 +99,19 @@ class Auth with ChangeNotifier {
           'returnSecureToken': true,
         }),
       );
+
+      if (response.statusCode >= 400) {
+        final body = json.decode(response.body);
+        var message = 'Failed to login - please try again later';
+        switch (body['error']?['message']) {
+          case 'INVALID_EMAIL':
+          case 'INVALID_PASSWORD':
+            message = 'Email or password is invalid';
+            break;
+        }
+        print(response.body.toString());
+        throw HttpException(message);
+      }
 
       final data = json.decode(response.body) as Map<String, dynamic>;
       final expiryDate = DateTime.now().add(

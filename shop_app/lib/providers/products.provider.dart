@@ -111,13 +111,15 @@ class Products with ChangeNotifier {
         }),
       );
       final responseData = json.decode(response.body);
-      _items.add(Product(
-        id: responseData['name'],
-        description: item.description,
-        title: item.title,
-        price: item.price,
-        imageUrl: item.imageUrl,
-      ));
+      _items.add(
+        Product(
+          id: responseData['name'],
+          description: item.description,
+          title: item.title,
+          price: item.price,
+          imageUrl: item.imageUrl,
+        ),
+      );
       notifyListeners();
     } catch (err) {
       print(err.toString());
