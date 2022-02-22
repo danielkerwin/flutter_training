@@ -5,7 +5,7 @@ class PlacesDatabase {
   static const name = 'places.db';
   static const placesTable = 'user_places';
   static const createStatement =
-      'CREATE TABLE $placesTable(id TEXT PRIMARY KEY, title TEXT, image TEXT)';
+      'CREATE TABLE $placesTable(id TEXT PRIMARY KEY, title TEXT, image TEXT, loc_lat REAL, loc_lng REAL, address TEXT)';
 }
 
 typedef DatabaseResult = List<Map<String, dynamic>>;
@@ -22,7 +22,7 @@ class DatabaseService {
     );
   }
 
-  static Future<int> insert(String table, Map<String, Object> data) async {
+  static Future<int> insert(String table, Map<String, dynamic> data) async {
     final db = await DatabaseService.getDatabase(table);
     return db.insert(
       table,

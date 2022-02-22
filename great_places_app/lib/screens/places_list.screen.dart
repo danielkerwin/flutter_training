@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../providers/places.provider.dart';
 import 'add_place.screen.dart';
+import 'place_detail.screen.dart';
 
 class PlacesListScreen extends StatelessWidget {
   const PlacesListScreen({Key? key}) : super(key: key);
@@ -44,10 +45,18 @@ class PlacesListScreen extends StatelessWidget {
                   itemCount: places.items.length,
                   itemBuilder: (ctx, idx) {
                     return ListTile(
+                      onTap: () => Navigator.of(context).pushNamed(
+                        PlaceDetailScreen.routeName,
+                        arguments: places.items[idx].id,
+                      ),
                       leading: CircleAvatar(
                         backgroundImage: FileImage(places.items[idx].image),
                       ),
                       title: Text(places.items[idx].title),
+                      subtitle: Text(
+                        places.items[idx].location?.address ??
+                            'unknown address',
+                      ),
                     );
                   },
                 );

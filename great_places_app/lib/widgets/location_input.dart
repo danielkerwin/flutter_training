@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 
+import '../screens/maps.screen.dart';
 import '../services/location.service.dart';
 
 class LocationInput extends StatefulWidget {
-  const LocationInput({Key? key}) : super(key: key);
+  final Function(double lat, double lng) onSelectPlace;
+  const LocationInput({
+    Key? key,
+    required this.onSelectPlace,
+  }) : super(key: key);
 
   @override
   _LocationInputState createState() => _LocationInputState();
@@ -13,20 +19,42 @@ class LocationInput extends StatefulWidget {
 class _LocationInputState extends State<LocationInput> {
   String? _previewImageUrl;
 
-  final _locationController = TextEditingController();
+  void _updatePreviewImageUrl(double lat, double long) {
+    final previewImageUrl = LocationService.generateLocationPreviewImage(
+      lat,
+      long,
+    );
+    setState(() => _previewImageUrl = previewImageUrl);
+  }
 
-  Future<void> getUserLocation() async {
+  Future<void> _getUserLocation() async {
     final location = Location();
     final permissionStatus = await location.requestPermission();
     if (permissionStatus != PermissionStatus.granted) {
       return;
     }
     final locData = await location.getLocation();
-    final previewImageUrl = LocationService.generateLocationPreviewImage(
-      locData.latitude!,
-      locData.longitude!,
+    _updatePreviewImageUrl(locData.latitude!, locData.longitude!);
+    widget.onSelectPlace(locData.latitude!, locData.longitude!);
+  }
+
+  Future<void> _selectOnMap() async {
+    final selectedLocation = await Navigator.of(context).push<LatLng>(
+      MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (ctx) => const MapsScreen(
+          isSelecting: true,
+        ),
+      ),
     );
-    setState(() => _previewImageUrl = previewImageUrl);
+    if (selectedLocation == null) {
+      return;
+    }
+    _updatePreviewImageUrl(
+      selectedLocation.latitude,
+      selectedLocation.longitude,
+    );
+    widget.onSelectPlace(selectedLocation.latitude, selectedLocation.longitude);
   }
 
   @override
@@ -54,7 +82,7 @@ class _LocationInputState extends State<LocationInput> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             TextButton.icon(
-              onPressed: getUserLocation,
+              onPressed: _getUserLocation,
               icon: const Icon(Icons.location_on),
               label: const Text('Current location'),
               style: TextButton.styleFrom(
@@ -62,7 +90,7 @@ class _LocationInputState extends State<LocationInput> {
               ),
             ),
             TextButton.icon(
-              onPressed: () {},
+              onPressed: _selectOnMap,
               icon: const Icon(Icons.map),
               label: const Text('Select on map'),
               style: TextButton.styleFrom(
@@ -71,12 +99,6 @@ class _LocationInputState extends State<LocationInput> {
             )
           ],
         ),
-        TextField(
-          controller: _locationController,
-          decoration: const InputDecoration(
-            labelText: 'Place address',
-          ),
-        )
       ],
     );
   }

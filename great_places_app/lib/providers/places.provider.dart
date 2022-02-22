@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../models/place.model.dart';
 import '../services/database.service.dart';
+import '../services/location.service.dart';
 
 class Places with ChangeNotifier {
   List<Place> _items = [];
@@ -21,6 +22,11 @@ class Places with ChangeNotifier {
               id: place['id'],
               title: place['title'],
               image: File(place['image']),
+              location: PlaceLocation(
+                latitude: place['loc_lat'],
+                longitude: place['loc_lng'],
+                address: place['address'],
+              ),
             ),
           )
           .toList();
@@ -30,12 +36,25 @@ class Places with ChangeNotifier {
     }
   }
 
-  void addPlace(String title, File image) async {
+  Future<void> addPlace(
+    String title,
+    File image,
+    PlaceLocation location,
+  ) async {
+    final address = await LocationService.getPlaceAddress(
+      location.latitude,
+      location.longitude,
+    );
+    final placeLocation = PlaceLocation(
+      latitude: location.latitude,
+      longitude: location.longitude,
+      address: address,
+    );
     final newPlace = Place(
       id: DateTime.now().toString(),
       title: title,
       image: image,
-      location: null,
+      location: placeLocation,
     );
     _items.add(newPlace);
     notifyListeners();
@@ -46,8 +65,15 @@ class Places with ChangeNotifier {
         'id': newPlace.id,
         'title': newPlace.title,
         'image': newPlace.image.path,
+        'loc_lat': newPlace.location?.latitude,
+        'loc_lng': newPlace.location?.latitude,
+        'address': newPlace.location?.address,
       },
     );
     await DatabaseService.queryById(PlacesDatabase.placesTable, newPlace.id);
+  }
+
+  Place? findById(String id) {
+    return _items.firstWhere((item) => item.id == id);
   }
 }

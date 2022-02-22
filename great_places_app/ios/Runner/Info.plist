@@ -30,6 +30,8 @@
 	<string>To take photos to add to the Great Places gallery</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>To pick the location while adding the place to the Great Places gallery</string>
+	<key>googleMapsApiKey</key>
+	<string>$(GOOGLE_MAPS_API_KEY)</string>		
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
