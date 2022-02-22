@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "719657927295",
+    "firebase_url": "https://flutter-training-chat-app-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "flutter-training-chat-app",
+    "storage_bucket": "flutter-training-chat-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:719657927295:android:0feb6fa5bee59417b1f54a",
+        "android_client_info": {
+          "package_name": "com.example.chat_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "719657927295-sqic45bmhjus8hm1ddn072vf9hptelch.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCPLJT681eeifgpgrhqBYBP7ccHba4t1gs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "719657927295-sqic45bmhjus8hm1ddn072vf9hptelch.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
