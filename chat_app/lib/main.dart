@@ -19,7 +19,6 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<UI>(
@@ -30,9 +29,10 @@ class MyApp extends StatelessWidget {
             primarySwatch: Colors.pink,
             backgroundColor: Colors.pink,
             brightness: ui.isDarkMode ? Brightness.dark : Brightness.light,
+            fontFamily: 'Roboto',
           );
           return MaterialApp(
-            debugShowCheckedModeBanner: false,
+            debugShowCheckedModeBanner: true,
             title: 'Flutter Chat',
             theme: theme.copyWith(
               // buttonTheme: const ButtonThemeData(buttonColor: Colors.white),
@@ -43,6 +43,7 @@ class MyApp extends StatelessWidget {
                   ),
                 ),
               ),
+              iconTheme: IconThemeData(color: theme.colorScheme.primary),
               colorScheme: theme.colorScheme.copyWith(
                 secondary: Colors.deepPurple,
                 onSecondary: Colors.white,
@@ -53,7 +54,9 @@ class MyApp extends StatelessWidget {
             home: StreamBuilder<User?>(
               stream: FirebaseAuth.instance.authStateChanges(),
               builder: (context, userSnapshot) {
-                return userSnapshot.hasData ? ChatScreen() : const AuthScreen();
+                return userSnapshot.hasData
+                    ? const ChatScreen()
+                    : const AuthScreen();
               },
             ),
           );

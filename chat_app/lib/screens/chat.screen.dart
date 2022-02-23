@@ -70,7 +70,7 @@ class ChatScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: SizedBox(
+      body: SafeArea(
         child: Column(
           children: const [
             Expanded(child: Messages()),

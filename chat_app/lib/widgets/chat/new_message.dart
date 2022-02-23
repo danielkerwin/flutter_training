@@ -37,13 +37,12 @@ class _NewMessageState extends State<NewMessage> {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(top: 10),
-      padding: const EdgeInsets.only(bottom: 40, left: 20, right: 20, top: 10),
+      padding: const EdgeInsets.only(left: 20, right: 20, bottom: 15),
       child: Row(
         children: [
           Expanded(
             child: TextField(
               autofocus: true,
-              textInputAction: TextInputAction.done,
               controller: _messageController,
               decoration: const InputDecoration(labelText: 'Enter a message'),
               onChanged: (val) => setState(() {}),
@@ -56,8 +55,8 @@ class _NewMessageState extends State<NewMessage> {
             onPressed:
                 _messageController.text.trim().isEmpty ? null : _sendMessage,
             icon: const Icon(Icons.send),
-            color: Theme.of(context).primaryColor,
-          )
+            // color: Theme.of(context).primaryColor,
+          ),
         ],
       ),
     );
